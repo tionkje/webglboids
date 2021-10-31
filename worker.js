@@ -39,8 +39,10 @@ let prevT;
 
 const S_CIRCLE=0;
 const S_RECT=1;
+const S_LINE=2;
 const circle = (color,pos,radius)=>debugShapes.push([S_CIRCLE,color, pos, radius]);
 const rect = (color,dims)=>debugShapes.push([S_RECT,color, dims]);
+const line = (color,start,end,width)=>debugShapes.push([S_LINE,color, start,end,width]);
 
 function doCalc(data){
 
@@ -71,7 +73,8 @@ function doCalc(data){
     vec3.add(boid.a_pos,boid.a_pos, vec3.scale(vec3.create(), boid.a_dir, dt));
     if(idx==0){
       // circle([1,0,0,.5],boid.a_pos, 10);
-      rect([1,0,0,.5],[boid.a_pos[0],boid.a_pos[1], 40, 40]);
+      // rect([1,0,0,.5],[boid.a_pos[0],boid.a_pos[1], 40, 40]);
+      line([1,0,0,.3],boid.a_pos,vec3.add(vec3.create(),boid.a_pos,vec3.scale(vec3.create(),boid.a_dir,1)), 1);
     }
   });
 

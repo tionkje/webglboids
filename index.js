@@ -76,6 +76,17 @@ function createBoidInst(idx, total){
   }
 }
 
+function segmentToQuad(start,end,width){
+  var dir = vec3.sub(vec3.create(),end,start);
+  var up = vec3.fromValues(dir[1],-dir[0],dir[2]);
+  vec3.normalize(up,up);
+  var up = vec3.scale(up, up, width);
+  var down = vec3.scale(vec3.create(), up, -1);
+  var up2 = vec3.add(vec3.create(), up, dir);
+  var down2 = vec3.add(vec3.create(), down, dir);
+  return [up, up2, down, down2].map(x=>vec3.add(x,x,start));
+}
+
 let boidCloud
 function init(numBoids){
   boidCloud = new InstancedRenderer(gl);
@@ -228,7 +239,7 @@ async function renderScene(numBoids){
   // const plane = mkplane(vec3.fromValues(0,0,1), vec3.fromValues(0,0,DBG.z));
   const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), invViewProj);
   var s = 30;
-  mousePosShape.setDimensions(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
+  mousePosShape.setRect(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
 
 
   // await prev frame receive
@@ -251,9 +262,12 @@ async function renderScene(numBoids){
             }case 1:{
               const [dims] = nr;
               s = new Rect(gl);
-              s.setDimensions(...dims);
-              // s.setPosition(pos);
-              // s.setRadius(radius);
+              s.setRect(...dims);
+              break;
+            }case 2:{
+              const [start,end,width] = nr;
+              s = new Rect(gl);
+              s.setCorners(segmentToQuad(start,end,width));
               break;
             }default: return;
           }

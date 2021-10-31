@@ -75,17 +75,17 @@ export class Rect{
 
   constructor(gl){
     this.gl = gl;
-    this.setDimensions(0,0,0,0);
+    this.setRect(0,0,0,0);
   }
 
   setColor(color){this.color=color;}
   setViewProj(viewProj){this.viewProj=viewProj;}
-  setDimensions(x,y,w,h){
+  setRect(x,y,w,h){
     this.setCorners([[x,y],[x+w,y],[x,y+h],[x+w,y+h]]);
   }
   setCorners(vtxs){
     const idxs = [0,2,1,1,2,3];
-    this.position = new Float32Array(idxs.flatMap(i=> [...vtxs[i],0]));
+    this.position = new Float32Array(idxs.flatMap(i=> [...vtxs[i].slice(0,2),0]));
   }
 
   load(){
