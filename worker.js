@@ -12,6 +12,7 @@ let boids;
 let buffers = {};
 let xdir;
 let zero;
+let debugShapes = [];
 self.addEventListener('message',({data})=>{
 
   // init
@@ -25,15 +26,20 @@ self.addEventListener('message',({data})=>{
   }
 
 
+  debugShapes = [];
   doCalc(data);
 
   if(data.noReply) return;
 
   // Seems like explicitly copying and transfering the buffers is slower...
   // self.postMessage({ buffers }, Object.entries(buffers).map(([name, buffer])=>buffer.buffer.slice()));
-  self.postMessage({ buffers });
+  self.postMessage({ buffers, debugShapes });
 });
 let prevT;
+
+const S_CIRCLE=0;
+const S_RECT=1;
+const circle = (color,pos,radius)=>debugShapes.push([S_CIRCLE,color, pos, radius]);
 
 function doCalc(data){
 
@@ -62,6 +68,9 @@ function doCalc(data){
 
     vec3.add(boid.a_dir,boid.a_dir, steering);
     vec3.add(boid.a_pos,boid.a_pos, vec3.scale(vec3.create(), boid.a_dir, dt));
+    if(idx==0){
+      circle([1,0,0,.5],boid.a_pos, 10);
+    }
   });
 
 

@@ -51,6 +51,8 @@ const mousePosShape = new Rect(gl);
 mousePosShape.setColor([0,1,0,0.5]);
 shapes.push(mousePosShape);
 
+const debugShapes = [];
+
 
 function createBoidInst(idx, total){
   const factor = (idx+1)/(total+1);
@@ -223,6 +225,18 @@ async function renderScene(numBoids){
   // start listening to next data from worker
   workerPromise = new Promise(cb=>{
     worker.addEventListener('message', ({data})=>{
+      debugShapes.length=0;
+      data.debugShapes&&
+        data.debugShapes.forEach(([shape,color,...nr])=>{
+          if(shape==0) {
+            const [pos,radius] = nr;
+            const s = new Circle(gl);
+            s.setPosition(pos);
+            s.setRadius(radius);
+            s.setColor(color);
+            debugShapes.push(s);
+          }
+        });
       Object.entries(data.buffers).forEach(([name,data])=>{
         if(boidCloud.attribs[name].length != data.length) return; // data length changed, propably invalid
         boidCloud.attribs[name].set(data);
@@ -253,7 +267,7 @@ async function renderScene(numBoids){
   boidCloud.uniforms.u_viewProj = viewProj;
   boidCloud.render();
 
-  shapes.forEach(shape=>{
+  shapes.concat(debugShapes).forEach(shape=>{
     shape.setViewProj(viewProj);
     shape.render();
   });
@@ -275,7 +289,7 @@ function finish(nr){
 
 findMaxNr(props);
 /*/
-const nr = 2**10;
+const nr = 2**1;
 console.log(nr);
 init(nr);
 let startT = 0;
