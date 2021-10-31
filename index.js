@@ -1,4 +1,5 @@
-import { createProgram, getProgramSetters, CircleRender } from "./src/glUtil.js"
+import { createProgram, getProgramSetters } from "./src/glUtil.js"
+import { CircleRender } from "./src/shapes.js"
 import { InstancedRenderer } from "./src/instanced.js"
 import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
