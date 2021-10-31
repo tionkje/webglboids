@@ -51,6 +51,17 @@ const mousePosShape = new Rect(gl);
 mousePosShape.setColor([0,1,0,0.5]);
 shapes.push(mousePosShape);
 
+const obstacles = [];
+function createObstacle(){
+  const obstacle = new Circle(gl);
+  obstacle.setColor([0,0,1,1]);
+  obstacle.setRadius(100);
+  obstacle.setPosition([canvas.width/2,canvas.height/2,0]);
+  shapes.push(obstacle);
+  obstacles.push(obstacle);
+}
+// createObstacle();
+
 const debugShapes = [];
 
 
@@ -148,6 +159,7 @@ function sendToWorker(){
     buffers: attribNamePropFilter(boidCloud.attribs),
     width: gl.canvas.width,
     height: gl.canvas.height,
+    obstacles: obstacles.map(createPropFilter(['position','radius'])),
     noReply:true,
   };
   // Seems like explicitly copying and transfering the buffers is slower...
@@ -216,7 +228,7 @@ async function renderScene(numBoids){
   // const plane = mkplane(vec3.fromValues(0,0,1), vec3.fromValues(0,0,DBG.z));
   const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), invViewProj);
   var s = 30;
-  mousePosShape.setDimensios(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
+  mousePosShape.setDimensions(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
 
 
   // await prev frame receive
@@ -228,14 +240,25 @@ async function renderScene(numBoids){
       debugShapes.length=0;
       data.debugShapes&&
         data.debugShapes.forEach(([shape,color,...nr])=>{
-          if(shape==0) {
-            const [pos,radius] = nr;
-            const s = new Circle(gl);
-            s.setPosition(pos);
-            s.setRadius(radius);
-            s.setColor(color);
-            debugShapes.push(s);
+          let s;
+          switch(shape) {
+            case 0:{
+              const [pos,radius] = nr;
+              s = new Circle(gl);
+              s.setPosition(pos);
+              s.setRadius(radius);
+              break;
+            }case 1:{
+              const [dims] = nr;
+              s = new Rect(gl);
+              s.setDimensions(...dims);
+              // s.setPosition(pos);
+              // s.setRadius(radius);
+              break;
+            }default: return;
           }
+          s.setColor(color);
+          debugShapes.push(s);
         });
       Object.entries(data.buffers).forEach(([name,data])=>{
         if(boidCloud.attribs[name].length != data.length) return; // data length changed, propably invalid

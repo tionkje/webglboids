@@ -29,7 +29,7 @@ self.addEventListener('message',({data})=>{
   debugShapes = [];
   doCalc(data);
 
-  if(data.noReply) return;
+  if(data.noReply) return console.log(data);
 
   // Seems like explicitly copying and transfering the buffers is slower...
   // self.postMessage({ buffers }, Object.entries(buffers).map(([name, buffer])=>buffer.buffer.slice()));
@@ -40,6 +40,7 @@ let prevT;
 const S_CIRCLE=0;
 const S_RECT=1;
 const circle = (color,pos,radius)=>debugShapes.push([S_CIRCLE,color, pos, radius]);
+const rect = (color,dims)=>debugShapes.push([S_RECT,color, dims]);
 
 function doCalc(data){
 
@@ -69,7 +70,8 @@ function doCalc(data){
     vec3.add(boid.a_dir,boid.a_dir, steering);
     vec3.add(boid.a_pos,boid.a_pos, vec3.scale(vec3.create(), boid.a_dir, dt));
     if(idx==0){
-      circle([1,0,0,.5],boid.a_pos, 10);
+      // circle([1,0,0,.5],boid.a_pos, 10);
+      rect([1,0,0,.5],[boid.a_pos[0],boid.a_pos[1], 40, 40]);
     }
   });
 
