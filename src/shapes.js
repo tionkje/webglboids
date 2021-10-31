@@ -65,10 +65,63 @@ export class Circle{
     this.setters.uniforms.color(this.color);
     this.setters.uniforms.viewProj(this.viewProj);
 
-    const gl = this.gl;
-    const numVerts = this.numSlices * 3;
-    this.setters.uniforms.resolution?.([gl.canvas.width, gl.canvas.height]);
+    this.gl.drawArrays(gl.TRIANGLES, 0, this.numSlices*3);
+  }
+}
 
-    gl.drawArrays(gl.TRIANGLES, 0, numVerts);
+export class Rect{
+  loaded = false;
+
+  constructor(gl){
+    this.gl = gl;
+  }
+
+  setColor(color){this.color=color;}
+  setViewProj(viewProj){this.viewProj=viewProj;}
+  setDimensios(x,y,w,h){
+    const idxs = [0,2,1,1,2,3];
+    const vtxs = [[x,y],[x+w,y],[x,y+h],[x+w,y+h]];
+    this.position = new Float32Array(idxs.flatMap(i=> [...vtxs[i],0]));
+  }
+
+  load(){
+    if(this.loaded) return;
+    this.loaded = true;
+
+    const vs = undent`
+      #version 300 es
+      uniform mat4 viewProj;
+      in vec3 position;
+
+      void main() {
+        gl_Position = viewProj*vec4(position, 1);
+      }
+    `;
+
+    const fs = undent`
+      #version 300 es
+      precision highp float;
+
+      uniform vec4 color;
+
+      out vec4 outColor;
+
+      void main() {
+        outColor = color;
+      }
+    `;
+
+    const program = this.program = createProgram(gl,vs,fs);
+    this.setters = getProgramSetters(gl, program);
+  }
+  
+  render(){
+    this.load();
+
+    this.setters.uniforms.color(this.color);
+    this.setters.uniforms.viewProj(this.viewProj);
+    this.setters.attribs.position(this.position);
+
+    this.gl.drawArrays(gl.TRIANGLES, 0, this.position.length/3);
   }
 }
