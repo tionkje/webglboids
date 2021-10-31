@@ -24,7 +24,10 @@ self.addEventListener('message',({data})=>{
     buffers = data.buffers;
   }
 
+
   doCalc(data);
+
+  if(data.noReply) return;
 
   // Seems like explicitly copying and transfering the buffers is slower...
   // self.postMessage({ buffers }, Object.entries(buffers).map(([name, buffer])=>buffer.buffer.slice()));
@@ -39,11 +42,8 @@ function doCalc(data){
   const dt = Math.max(Math.min(now-prevT,1/10),1/60);
   prevT = now;
 
-
-  const sceneMousePos = data.sceneMousePos;
-
-
-  const target = sceneMousePos;
+  // mousepos is target
+  const target = data.sceneMousePos;
   if(!target) return;
 
   boids.forEach((boid,idx)=>{

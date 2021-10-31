@@ -78,6 +78,7 @@ function init(numBoids){
     a_scale:{instanced:1, dynamic:true},
   }
   boidCloud.attribs = {
+    // create a triangle with a front direction where 0,0 is in the center(ish)
     a_position: new Float32Array([
       1, 0,
       -1, -0.5,
@@ -124,21 +125,22 @@ function init(numBoids){
 
 
 // create a new object with only props in list
-const filterProps = list => o =>Object.fromEntries(Object.entries(o).filter(x=>list.includes(x[0])))
+const createPropFilter = list => o =>Object.fromEntries(Object.entries(o).filter(x=>list.includes(x[0])))
 
 function sendToWorker(){
   // call load to make sure the buffers are filled in
   boidCloud.load();
 
 
-  const attribList = [ 'a_pos', 'a_dir' ];
-  const propsFilter = filterProps(attribList);
+  const attribNames = [ 'a_pos', 'a_dir' ];
+  const attribNamePropFilter = createPropFilter(attribNames);
   const ctx = { 
     origin: location.origin, 
-    boids: boidCloud.instances.map(propsFilter),
-    buffers: propsFilter(boidCloud.attribs),
+    boids: boidCloud.instances.map(attribNamePropFilter),
+    buffers: attribNamePropFilter(boidCloud.attribs),
     width: gl.canvas.width,
     height: gl.canvas.height,
+    noReply:true,
   };
   // Seems like explicitly copying and transfering the buffers is slower...
   // worker.postMessage(ctx,Object.values(ctx.buffers).map(x=>x.buffer.slice()));
