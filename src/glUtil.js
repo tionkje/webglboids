@@ -10,9 +10,17 @@ export function createProgram(gl, vertexShaderSource, fragmentShaderSource) {
       return shader;
     }
 
+    console.log(printSource(source));
     console.error(gl.getShaderInfoLog(shader));
     debugger;
     gl.deleteShader(shader);
+  }
+  function printSource(str){
+    const lines = str.split('\n');
+    const max = (lines.length+'').length;
+    return lines
+      .map((x,i)=>(Array(max).fill(0).join('')+(i+1)).slice(-max)+': '+x)
+      .join('\n');
   }
 
   // Create Shaders
