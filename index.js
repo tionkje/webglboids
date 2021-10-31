@@ -1,5 +1,5 @@
 import { createProgram, getProgramSetters } from "./src/glUtil.js"
-import { CircleRender } from "./src/shapes.js"
+import { Circle } from "./src/shapes.js"
 import { InstancedRenderer } from "./src/instanced.js"
 import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
@@ -190,7 +190,7 @@ var gui = new dat.GUI();
 gui.add(DBG,'z',-100,100,0.01);
 
 
-const rayPosCircle = new CircleRender(gl);
+const rayPosCircle = new Circle(gl);
 
 // Draw
 let workerPromise;

@@ -1,7 +1,7 @@
 import undent from './undent.js';
 import { createProgram, getProgramSetters } from "./glUtil.js"
 
-export class CircleRender{
+export class Circle{
   numSlices = 32;
   loaded = false;
 
@@ -9,10 +9,10 @@ export class CircleRender{
     this.gl = gl;
   }
 
-  setViewProj(viewProj){this.viewProj=viewProj}
-  setRadius(radius){this.radius=radius}
-  setColor(color){this.color=color}
-  setPosition(position){this.position=position}
+  setViewProj(viewProj){this.viewProj=viewProj;}
+  setRadius(radius){this.radius=radius;}
+  setColor(color){this.color=color;}
+  setPosition(position){this.position=position;}
 
   load(){
     if(this.loaded) return;
