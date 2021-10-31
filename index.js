@@ -248,10 +248,10 @@ async function renderScene(numBoids){
   boidCloud.render();
 
   if(sceneMousePos){
-    rayPosCircle.setters.uniforms.position(sceneMousePos.slice(0,3));
-    rayPosCircle.setters.uniforms.radius([50]);
-    rayPosCircle.setters.uniforms.color([0,1,0,0.5]);
-    rayPosCircle.setters.uniforms.viewProj(viewProj);
+    rayPosCircle.setPosition(sceneMousePos.slice(0,3));
+    rayPosCircle.setRadius([50]);
+    rayPosCircle.setColor([0,1,0,0.5]);
+    rayPosCircle.setViewProj(viewProj);
     rayPosCircle.render();
   }
 }

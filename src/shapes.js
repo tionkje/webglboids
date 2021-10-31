@@ -2,13 +2,22 @@ import undent from './undent.js';
 import { createProgram, getProgramSetters } from "./glUtil.js"
 
 export class CircleRender{
+  numSlices = 32;
+  loaded = false;
+
   constructor(gl){
-    this.numSlices = 32;
     this.gl = gl;
-    this.load();
   }
 
+  setViewProj(viewProj){this.viewProj=viewProj}
+  setRadius(radius){this.radius=radius}
+  setColor(color){this.color=color}
+  setPosition(position){this.position=position}
+
   load(){
+    if(this.loaded) return;
+    this.loaded = true;
+
     const vs = undent`
       #version 300 es
       uniform mat4 viewProj;
@@ -49,6 +58,13 @@ export class CircleRender{
   }
   
   render(){
+    this.load();
+
+    this.setters.uniforms.position(this.position);
+    this.setters.uniforms.radius([this.radius]);
+    this.setters.uniforms.color(this.color);
+    this.setters.uniforms.viewProj(this.viewProj);
+
     const gl = this.gl;
     const numVerts = this.numSlices * 3;
     this.setters.uniforms.resolution?.([gl.canvas.width, gl.canvas.height]);
