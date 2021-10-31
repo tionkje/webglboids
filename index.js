@@ -21,13 +21,19 @@ function resize(){
 
   canvas.width = canvas.clientWidth
   canvas.height = canvas.clientHeight
-
-  const aspect = gl.canvas.width/gl.canvas.height
-  mat4.perspective(projMat, Math.PI/2, aspect, zNear, zFar);
-  mat4.scale(projMat, projMat, vec3.fromValues(1,-1,1));
-
   mat4.identity(camMat);
-  mat4.translate(camMat, camMat, vec3.fromValues(gl.canvas.width/2,gl.canvas.height/2,gl.canvas.height/2));
+  const aspect = canvas.width/canvas.height
+  const PERSPECTIVE = false;
+  if(PERSPECTIVE){
+    // create perspective camera where z-nul plane has coords that align to screen coords
+    mat4.perspective(projMat, Math.PI/2, aspect, zNear, zFar);
+    mat4.scale(projMat, projMat, vec3.fromValues(1,-1,1));
+    mat4.translate(camMat, camMat, vec3.fromValues(canvas.width/2,canvas.height/2,canvas.height/2));
+  }else{
+    mat4.ortho(projMat, 0, canvas.width, canvas.height,0, zNear, zFar)
+    mat4.translate(camMat, camMat, vec3.fromValues(0,0,canvas.height/2));
+  }
+
   viewChanged=1;
 }
 const viewProj = mat4.create();
@@ -165,6 +171,9 @@ mouseDrag.on('move',e=>{
 });
 
 let mousePos = new Float32Array(3);
+mousePos[0] = canvas.width/2;
+mousePos[1] = canvas.height/2;
+
 function onMouseMove(e){
   mousePos[0] = e.clientX;
   mousePos[1] = e.clientY;
@@ -184,8 +193,6 @@ const rayPosCircle = new CircleRender(gl);
 let workerPromise;
 async function renderScene(numBoids){
 
-
-
   if(viewChanged){
     mat4.invert(viewMat, camMat);
     mat4.multiply(viewProj, projMat, viewMat);
@@ -199,7 +206,6 @@ async function renderScene(numBoids){
   // const plane = vec4.fromValues(0,0,1,-DBG.z);
   // const plane = mkplane(vec3.fromValues(0,0,1), vec3.fromValues(0,0,DBG.z));
   const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), invViewProj);
-
 
 
   // await prev frame receive
@@ -270,7 +276,6 @@ let startT = 0;
 let cFrame = 0;
 let fps = '..';
 async function loop(){
-  requestAnimationFrame(loop);
   cFrame++;
 
   var now = performance.now();
@@ -282,6 +287,7 @@ async function loop(){
   }
 
   await renderScene(nr);
+  requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 //*/
