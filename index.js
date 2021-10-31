@@ -1,5 +1,5 @@
 import { createProgram, getProgramSetters } from "./src/glUtil.js"
-import { Circle } from "./src/shapes.js"
+import { Circle, Rect } from "./src/shapes.js"
 import { InstancedRenderer } from "./src/instanced.js"
 import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
@@ -45,6 +45,11 @@ resize();
 window.addEventListener('resize',resize);
 
 const worker = new Worker('./worker.js');
+
+const shapes = [];
+const mousePosShape = new Rect(gl);
+mousePosShape.setColor([0,1,0,0.5]);
+shapes.push(mousePosShape);
 
 
 function createBoidInst(idx, total){
@@ -190,7 +195,6 @@ var gui = new dat.GUI();
 gui.add(DBG,'z',-100,100,0.01);
 
 
-const rayPosCircle = new Circle(gl);
 
 // Draw
 let workerPromise;
@@ -209,6 +213,8 @@ async function renderScene(numBoids){
   // const plane = vec4.fromValues(0,0,1,-DBG.z);
   // const plane = mkplane(vec3.fromValues(0,0,1), vec3.fromValues(0,0,DBG.z));
   const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), invViewProj);
+  var s = 30;
+  mousePosShape.setDimensios(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
 
 
   // await prev frame receive
@@ -247,13 +253,10 @@ async function renderScene(numBoids){
   boidCloud.uniforms.u_viewProj = viewProj;
   boidCloud.render();
 
-  if(sceneMousePos){
-    rayPosCircle.setPosition(sceneMousePos.slice(0,3));
-    rayPosCircle.setRadius([50]);
-    rayPosCircle.setColor([0,1,0,0.5]);
-    rayPosCircle.setViewProj(viewProj);
-    rayPosCircle.render();
-  }
+  shapes.forEach(shape=>{
+    shape.setViewProj(viewProj);
+    shape.render();
+  });
 }
 
  /*

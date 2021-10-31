@@ -1,6 +1,7 @@
 import undent from './undent.js';
 import { createProgram, getProgramSetters } from "./glUtil.js"
 
+
 export class Circle{
   numSlices = 32;
   loaded = false;
@@ -74,6 +75,7 @@ export class Rect{
 
   constructor(gl){
     this.gl = gl;
+    this.setDimensios(0,0,0,0);
   }
 
   setColor(color){this.color=color;}
