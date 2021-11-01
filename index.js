@@ -52,15 +52,18 @@ mousePosShape.setColor([0,1,0,0.5]);
 shapes.push(mousePosShape);
 
 const obstacles = [];
-function createObstacle(){
+function createObstacle(pos, radius){
   const obstacle = new Shapes.CircleRenderer(gl);
-  obstacle.setColor([0,0,1,1]);
-  obstacle.setRadius(100);
-  obstacle.setPosition([canvas.width/2,canvas.height/2,0]);
+  obstacle.setColor([0,0,1,.2]);
+  obstacle.setRadius(radius);
+  obstacle.setPosition(pos);
   shapes.push(obstacle);
   obstacles.push(obstacle);
 }
-createObstacle();
+createObstacle([canvas.width/2,canvas.height/2,0], 10);
+
+for(var i=0;i<50;i++)
+  createObstacle([Math.random()*canvas.width,Math.random()*canvas.height,0], Math.random()*100+10);
 
 const debugShapes = [];
 

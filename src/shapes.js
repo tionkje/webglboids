@@ -1,16 +1,18 @@
 import undent from './undent.js';
 import { createProgram, getProgramSetters } from "./glUtil.js"
-import { lineSegmentToQuad } from './geoUtil.js';
+import { lineSegmentToQuad, vectorToQuad } from './geoUtil.js';
 
 
 export const S_CIRCLE=0;
 export const S_RECT=1;
 export const S_LINE=2;
+export const S_VECTOR=3;
 
 export const shape = (type, props, color)=>[type, props, color];
 export const circle = (props, color)=>[S_CIRCLE, props, color];
 export const rect = (props, color)=>[S_RECT, props, color];
 export const line = (props, color)=>[S_LINE, props, color];
+export const vector = (props, color)=>[S_VECTOR, props, color];
 
 export function createShapeRenderer([shape,props,color]){
   let s;
@@ -30,6 +32,11 @@ export function createShapeRenderer([shape,props,color]){
       const [start,end,width] = props;
       s = new QuadRenderer(gl);
       s.setCorners(lineSegmentToQuad(start,end,width));
+      break;
+    }case S_VECTOR:{
+      const [start,dir,width] = props;
+      s = new QuadRenderer(gl);
+      s.setCorners(vectorToQuad(start,dir,width));
       break;
     }default: return console.error(`Unknown Shape type`, shape);
   }
