@@ -220,6 +220,31 @@ var gui = new dat.GUI();
 gui.add(DBG,'z',-100,100,0.01);
 
 
+function createDebugShape(shape,color,nr){
+  let s;
+  switch(shape) {
+    case 0:{
+      const [pos,radius] = nr;
+      s = new Circle(gl);
+      s.setPosition(pos);
+      s.setRadius(radius);
+      break;
+    }case 1:{
+      const [dims] = nr;
+      s = new Rect(gl);
+      s.setRect(...dims);
+      break;
+    }case 2:{
+      const [start,end,width] = nr;
+      s = new Rect(gl);
+      s.setCorners(segmentToQuad(start,end,width));
+      break;
+    }default: return;
+  }
+  s.setColor(color);
+  debugShapes.push(s);
+}
+
 
 // Draw
 let workerPromise;
@@ -251,28 +276,7 @@ async function renderScene(numBoids){
       debugShapes.length=0;
       data.debugShapes&&
         data.debugShapes.forEach(([shape,color,...nr])=>{
-          let s;
-          switch(shape) {
-            case 0:{
-              const [pos,radius] = nr;
-              s = new Circle(gl);
-              s.setPosition(pos);
-              s.setRadius(radius);
-              break;
-            }case 1:{
-              const [dims] = nr;
-              s = new Rect(gl);
-              s.setRect(...dims);
-              break;
-            }case 2:{
-              const [start,end,width] = nr;
-              s = new Rect(gl);
-              s.setCorners(segmentToQuad(start,end,width));
-              break;
-            }default: return;
-          }
-          s.setColor(color);
-          debugShapes.push(s);
+          createDebugShape(shape, color,nr);
         });
       Object.entries(data.buffers).forEach(([name,data])=>{
         if(boidCloud.attribs[name].length != data.length) return; // data length changed, propably invalid
