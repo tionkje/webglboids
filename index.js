@@ -240,8 +240,8 @@ async function renderScene(numBoids){
     worker.addEventListener('message', ({data})=>{
       debugShapes.length=0;
       data.debugShapes&&
-        data.debugShapes.forEach(([shape,color,...nr])=>{
-          var s = Shapes.createDebugShape(shape, color,nr);
+        data.debugShapes.forEach(([ shape, props, color ])=>{
+          var s = Shapes.createShapeRenderer(shape, props, color);
           if(!s) return;
           debugShapes.push(s);
         });

@@ -6,22 +6,28 @@ import { lineSegmentToQuad } from './geoUtil.js';
 export const S_CIRCLE=0;
 export const S_RECT=1;
 export const S_LINE=2;
-export function createDebugShape(shape,color,nr){
+
+export const shape = (type, props, color)=>[type, props, color];
+// export const circle = (pos,radius)=>debugShapes.push([Shapes.S_CIRCLE,color, pos, radius]);
+// export const rect = (dims)=>debugShapes.push([Shapes.S_RECT,color, dims]);
+// export const line = (start,end,width)=>debugShapes.push([Shapes.S_LINE,color, start,end,width]);
+
+export function createShapeRenderer(shape,props,color){
   let s;
   switch(shape) {
     case S_CIRCLE:{
-      const [pos,radius] = nr;
+      const [pos,radius] = props;
       s = new CircleRenderer(gl);
       s.setPosition(pos);
       s.setRadius(radius);
       break;
     }case S_RECT:{
-      const [dims] = nr;
+      const [dims] = props;
       s = new QuadRenderer(gl);
       s.setRect(...dims);
       break;
     }case S_LINE:{
-      const [start,end,width] = nr;
+      const [start,end,width] = props;
       s = new QuadRenderer(gl);
       s.setCorners(lineSegmentToQuad(start,end,width));
       break;

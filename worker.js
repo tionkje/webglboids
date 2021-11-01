@@ -38,9 +38,11 @@ self.addEventListener('message',({data})=>{
 });
 let prevT;
 
-const circle = (color,pos,radius)=>debugShapes.push([Shapes.S_CIRCLE,color, pos, radius]);
-const rect = (color,dims)=>debugShapes.push([Shapes.S_RECT,color, dims]);
-const line = (color,start,end,width)=>debugShapes.push([Shapes.S_LINE,color, start,end,width]);
+const red = [1,0,0,1];
+const shape = (type, props, color=red)=>debugShapes.push(Shapes.shape(type,props,color));
+const circle = (props,color=red)=>shape(Shapes.S_CIRCLE, props, color);
+const rect = (props,color=red)=>shape(Shapes.S_RECT, props, color);
+const line = (props,color=red)=>shape(Shapes.S_LINE, props, color);
 
 function doCalc(data){
 
@@ -72,7 +74,7 @@ function doCalc(data){
     if(idx==0){
       // circle([1,0,0,.5],boid.a_pos, 10);
       // rect([1,0,0,.5],[boid.a_pos[0],boid.a_pos[1], 40, 40]);
-      line([1,0,0,.3],boid.a_pos,vec3.add(vec3.create(),boid.a_pos,vec3.scale(vec3.create(),boid.a_dir,1)), 1);
+      line([boid.a_pos,vec3.add(vec3.create(),boid.a_pos,boid.a_dir), 1]);
     }
   });
 
