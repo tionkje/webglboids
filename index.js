@@ -239,12 +239,8 @@ async function renderScene(numBoids){
   workerPromise = new Promise(cb=>{
     worker.addEventListener('message', ({data})=>{
       debugShapes.length=0;
-      data.debugShapes&&
-        data.debugShapes.forEach(([ shape, props, color ])=>{
-          var s = Shapes.createShapeRenderer(shape, props, color);
-          if(!s) return;
-          debugShapes.push(s);
-        });
+      if(data.debugShapes)
+        debugShapes.push(...data.debugShapes.map(Shapes.createShapeRenderer));
       Object.entries(data.buffers).forEach(([name,data])=>{
         if(boidCloud.attribs[name].length != data.length) return; // data length changed, propably invalid
         boidCloud.attribs[name].set(data);

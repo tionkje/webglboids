@@ -12,7 +12,7 @@ export const circle = (props, color)=>[S_CIRCLE, props, color];
 export const rect = (props, color)=>[S_RECT, props, color];
 export const line = (props, color)=>[S_LINE, props, color];
 
-export function createShapeRenderer(shape,props,color){
+export function createShapeRenderer([shape,props,color]){
   let s;
   switch(shape) {
     case S_CIRCLE:{
@@ -31,7 +31,7 @@ export function createShapeRenderer(shape,props,color){
       s = new QuadRenderer(gl);
       s.setCorners(lineSegmentToQuad(start,end,width));
       break;
-    }default: return;
+    }default: return console.error(`Unknown Shape type`, shape);
   }
   s.setColor(color);
   return s;
