@@ -1,6 +1,9 @@
 import undent from './undent.js';
 import { createProgram, getProgramSetters } from "./glUtil.js"
 
+export const S_CIRCLE=0;
+export const S_RECT=1;
+export const S_LINE=2;
 
 export class Circle{
   numSlices = 32;

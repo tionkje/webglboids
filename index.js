@@ -44,7 +44,7 @@ const camMat = mat4.create();
 resize();
 window.addEventListener('resize',resize);
 
-const worker = new Worker('./worker.js');
+const worker = new Worker('./worker.js',{type:'module'});
 
 const shapes = [];
 const mousePosShape = new Rect(gl);

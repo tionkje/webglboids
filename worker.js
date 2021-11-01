@@ -1,4 +1,5 @@
-importScripts("./node_modules/gl-matrix/gl-matrix.js");
+import * as Shapes from "./src/shapes.js"
+import "./node_modules/gl-matrix/gl-matrix.js";
 
 let { mat3, mat4, vec2, vec3, vec4 } = glMatrix;
 
@@ -37,12 +38,9 @@ self.addEventListener('message',({data})=>{
 });
 let prevT;
 
-const S_CIRCLE=0;
-const S_RECT=1;
-const S_LINE=2;
-const circle = (color,pos,radius)=>debugShapes.push([S_CIRCLE,color, pos, radius]);
-const rect = (color,dims)=>debugShapes.push([S_RECT,color, dims]);
-const line = (color,start,end,width)=>debugShapes.push([S_LINE,color, start,end,width]);
+const circle = (color,pos,radius)=>debugShapes.push([Shapes.S_CIRCLE,color, pos, radius]);
+const rect = (color,dims)=>debugShapes.push([Shapes.S_RECT,color, dims]);
+const line = (color,start,end,width)=>debugShapes.push([Shapes.S_LINE,color, start,end,width]);
 
 function doCalc(data){
 
