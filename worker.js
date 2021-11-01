@@ -10,6 +10,7 @@ const limit = (out,v,l)=>{
 const setMag = (out,v,m)=> vec3.scale(out,v,m/vec3.len(v));
 
 let boids;
+let obstacles;
 let buffers = {};
 let xdir;
 let zero;
@@ -25,6 +26,7 @@ self.addEventListener('message',({data})=>{
     boids = data.boids;
     buffers = data.buffers;
   }
+  if(data.obstacles) obstacles = data.obstacles;
 
 
   debugShapes = [];

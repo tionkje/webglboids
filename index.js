@@ -249,10 +249,8 @@ async function renderScene(numBoids){
     },{once:true});
   });
 
-  // send data to worker to start this frames work
+  // send data (that changes) to worker to start this frames work
   const ctx = {}
-  ctx.width = gl.canvas.width;
-  ctx.height = gl.canvas.height;
   ctx.sceneMousePos = sceneMousePos;
   worker.postMessage(ctx);
 
