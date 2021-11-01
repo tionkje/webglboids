@@ -45,6 +45,9 @@ const circle = (props,color=red)=>debugShapes.push(Shapes.circle(props, color));
 const rect = (props,color=red)=>debugShapes.push(Shapes.rect(props, color));
 const line = (props,color=red)=>debugShapes.push(Shapes.line(props, color));
 
+
+const seek = (out, pos,target)=>vec3.sub(out, target, pos);
+
 function doCalc(data){
 
   // delta time
@@ -63,15 +66,19 @@ function doCalc(data){
     const maxSpeed = 400;
 
     const steering = vec3.create();
-    vec3.sub(steering, target, boid.a_pos);
+    seek(steering, boid.a_pos, target);
 
+    // apply steer on dir
     limit(steering, steering, maxForce);
-    limit(boid.a_dir, boid.a_dir, maxSpeed);
-
     vec3.scale(steering, steering, dt);
-
     vec3.add(boid.a_dir,boid.a_dir, steering);
-    vec3.add(boid.a_pos,boid.a_pos, vec3.scale(vec3.create(), boid.a_dir, dt));
+
+    // apply dir on position
+    limit(boid.a_dir, boid.a_dir, maxSpeed);
+    const speed = vec3.create();
+    vec3.scale(speed, boid.a_dir, dt);
+    vec3.add(boid.a_pos,boid.a_pos, speed);
+
     if(idx==0){
       // circle([1,0,0,.5],boid.a_pos, 10);
       // rect([1,0,0,.5],[boid.a_pos[0],boid.a_pos[1], 40, 40]);
