@@ -1,8 +1,9 @@
-import "./node_modules/gl-matrix/gl-matrix.js";
 import * as Shapes from "./src/shapes.js"
 
+import "./node_modules/gl-matrix/gl-matrix.js";
 let { mat3, mat4, vec2, vec3, vec4 } = glMatrix;
 
+import { distanceLineSegmentToPoint } from './src/geoUtil.js';
 const limit = (out,v,l)=>{
   const len = vec3.length(v);
   return vec3.scale(out, v, len>l ? l/len : 1);
@@ -46,7 +47,27 @@ const rect = (props,color=red)=>debugShapes.push(Shapes.rect(props, color));
 const line = (props,color=red)=>debugShapes.push(Shapes.line(props, color));
 
 
-const seek = (out, pos,target)=>vec3.sub(out, target, pos);
+const seek = (out, pos, target)=>vec3.sub(out, target, pos);
+const obstacleAvoid = (out, obstacles, pos, vel)=>{
+  obstacles.forEach(o=>{
+    // o.radius; o.position;
+    if(debugEnabled){
+      line([pos, o.position, 2]);
+    }
+    var start = pos;
+    var dir = vec3.create();
+    vec3.normalize(dir,vel);
+    vec3.scale(dir, dir, 200);
+    var end = vec3.add(vec3.create(), pos, dir);
+
+    var dist = distanceLineSegmentToPoint(start, end, o.position);
+
+    var hit = dist < o.radius +7;
+    if(debugEnabled) line([start,end,7],hit?[1,0,0,1]:[0,1,0,1]);
+  });
+  return out;
+}
+let debugEnabled = false;
 
 function doCalc(data){
 
@@ -60,13 +81,16 @@ function doCalc(data){
   if(!target) return;
 
   boids.forEach((boid,idx)=>{
+    debugEnabled = idx===0;
     // const viewRange = 40;
     // const others = boids.filter(o=>o!=boid && vec3.dist(o.a_pos, boid.a_pos) < viewRange);
     const maxForce = 1000;
     const maxSpeed = 400;
 
     const steering = vec3.create();
-    seek(steering, boid.a_pos, target);
+
+    vec3.add(steering, steering, seek(vec3.create, boid.a_pos, target));
+    vec3.add(steering, steering, obstacleAvoid(vec3.create(), obstacles, boid.a_pos, boid.a_dir));
 
     // apply steer on dir
     limit(steering, steering, maxForce);
