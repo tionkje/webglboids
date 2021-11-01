@@ -1,5 +1,5 @@
-import { createProgram, getProgramSetters } from "./src/glUtil.js"
-import * as Shapes from "./src/shapes.js"
+import { createProgram, getProgramSetters } from "./src/glUtil.js";
+import * as Shapes from "./src/shapes.js";
 import { InstancedRenderer } from "./src/instanced.js"
 import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
@@ -76,16 +76,6 @@ function createBoidInst(idx, total){
   }
 }
 
-function segmentToQuad(start,end,width){
-  var dir = vec3.sub(vec3.create(),end,start);
-  var up = vec3.fromValues(dir[1],-dir[0],dir[2]);
-  vec3.normalize(up,up);
-  var up = vec3.scale(up, up, width);
-  var down = vec3.scale(vec3.create(), up, -1);
-  var up2 = vec3.add(vec3.create(), up, dir);
-  var down2 = vec3.add(vec3.create(), down, dir);
-  return [up, up2, down, down2].map(x=>vec3.add(x,x,start));
-}
 
 let boidCloud
 function init(numBoids){
@@ -220,31 +210,6 @@ var gui = new dat.GUI();
 gui.add(DBG,'z',-100,100,0.01);
 
 
-function createDebugShape(shape,color,nr){
-  let s;
-  switch(shape) {
-    case Shapes.S_CIRCLE:{
-      const [pos,radius] = nr;
-      s = new Shapes.Circle(gl);
-      s.setPosition(pos);
-      s.setRadius(radius);
-      break;
-    }case Shapes.S_RECT:{
-      const [dims] = nr;
-      s = new Shapes.Rect(gl);
-      s.setRect(...dims);
-      break;
-    }case Shapes.S_LINE:{
-      const [start,end,width] = nr;
-      s = new Shapes.Rect(gl);
-      s.setCorners(segmentToQuad(start,end,width));
-      break;
-    }default: return;
-  }
-  s.setColor(color);
-  debugShapes.push(s);
-}
-
 
 // Draw
 let workerPromise;
@@ -276,7 +241,9 @@ async function renderScene(numBoids){
       debugShapes.length=0;
       data.debugShapes&&
         data.debugShapes.forEach(([shape,color,...nr])=>{
-          createDebugShape(shape, color,nr);
+          var s = Shapes.createDebugShape(shape, color,nr);
+          if(!s) return;
+          debugShapes.push(s);
         });
       Object.entries(data.buffers).forEach(([name,data])=>{
         if(boidCloud.attribs[name].length != data.length) return; // data length changed, propably invalid
