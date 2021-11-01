@@ -11,18 +11,18 @@ export function createDebugShape(shape,color,nr){
   switch(shape) {
     case S_CIRCLE:{
       const [pos,radius] = nr;
-      s = new Circle(gl);
+      s = new CircleRenderer(gl);
       s.setPosition(pos);
       s.setRadius(radius);
       break;
     }case S_RECT:{
       const [dims] = nr;
-      s = new Rect(gl);
+      s = new QuadRenderer(gl);
       s.setRect(...dims);
       break;
     }case S_LINE:{
       const [start,end,width] = nr;
-      s = new Rect(gl);
+      s = new QuadRenderer(gl);
       s.setCorners(lineSegmentToQuad(start,end,width));
       break;
     }default: return;
@@ -32,7 +32,7 @@ export function createDebugShape(shape,color,nr){
 }
 
 
-export class Circle{
+export class CircleRenderer{
   numSlices = 32;
   loaded = false;
 
@@ -100,7 +100,7 @@ export class Circle{
   }
 }
 
-export class Rect{
+export class QuadRenderer{
   loaded = false;
 
   constructor(gl){

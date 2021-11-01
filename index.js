@@ -47,20 +47,20 @@ window.addEventListener('resize',resize);
 const worker = new Worker('./worker.js',{type:'module'});
 
 const shapes = [];
-const mousePosShape = new Shapes.Rect(gl);
+const mousePosShape = new Shapes.QuadRenderer(gl);
 mousePosShape.setColor([0,1,0,0.5]);
 shapes.push(mousePosShape);
 
 const obstacles = [];
 function createObstacle(){
-  const obstacle = new Shapes.Circle(gl);
+  const obstacle = new Shapes.CircleRenderer(gl);
   obstacle.setColor([0,0,1,1]);
   obstacle.setRadius(100);
   obstacle.setPosition([canvas.width/2,canvas.height/2,0]);
   shapes.push(obstacle);
   obstacles.push(obstacle);
 }
-// createObstacle();
+createObstacle();
 
 const debugShapes = [];
 
