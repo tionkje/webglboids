@@ -1,5 +1,5 @@
 import { createProgram, getProgramSetters } from "./src/glUtil.js"
-import { Circle, Rect } from "./src/shapes.js"
+import * as Shapes from "./src/shapes.js"
 import { InstancedRenderer } from "./src/instanced.js"
 import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
@@ -47,13 +47,13 @@ window.addEventListener('resize',resize);
 const worker = new Worker('./worker.js',{type:'module'});
 
 const shapes = [];
-const mousePosShape = new Rect(gl);
+const mousePosShape = new Shapes.Rect(gl);
 mousePosShape.setColor([0,1,0,0.5]);
 shapes.push(mousePosShape);
 
 const obstacles = [];
 function createObstacle(){
-  const obstacle = new Circle(gl);
+  const obstacle = new Shapes.Circle(gl);
   obstacle.setColor([0,0,1,1]);
   obstacle.setRadius(100);
   obstacle.setPosition([canvas.width/2,canvas.height/2,0]);
@@ -223,20 +223,20 @@ gui.add(DBG,'z',-100,100,0.01);
 function createDebugShape(shape,color,nr){
   let s;
   switch(shape) {
-    case 0:{
+    case Shapes.S_CIRCLE:{
       const [pos,radius] = nr;
-      s = new Circle(gl);
+      s = new Shapes.Circle(gl);
       s.setPosition(pos);
       s.setRadius(radius);
       break;
-    }case 1:{
+    }case Shapes.S_RECT:{
       const [dims] = nr;
-      s = new Rect(gl);
+      s = new Shapes.Rect(gl);
       s.setRect(...dims);
       break;
-    }case 2:{
+    }case Shapes.S_LINE:{
       const [start,end,width] = nr;
-      s = new Rect(gl);
+      s = new Shapes.Rect(gl);
       s.setCorners(segmentToQuad(start,end,width));
       break;
     }default: return;
