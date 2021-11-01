@@ -8,9 +8,9 @@ export const S_RECT=1;
 export const S_LINE=2;
 
 export const shape = (type, props, color)=>[type, props, color];
-// export const circle = (pos,radius)=>debugShapes.push([Shapes.S_CIRCLE,color, pos, radius]);
-// export const rect = (dims)=>debugShapes.push([Shapes.S_RECT,color, dims]);
-// export const line = (start,end,width)=>debugShapes.push([Shapes.S_LINE,color, start,end,width]);
+export const circle = (props, color)=>[S_CIRCLE, props, color];
+export const rect = (props, color)=>[S_RECT, props, color];
+export const line = (props, color)=>[S_LINE, props, color];
 
 export function createShapeRenderer(shape,props,color){
   let s;

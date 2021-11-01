@@ -38,11 +38,10 @@ self.addEventListener('message',({data})=>{
 });
 let prevT;
 
-const red = [1,0,0,1];
-const shape = (type, props, color=red)=>debugShapes.push(Shapes.shape(type,props,color));
-const circle = (props,color=red)=>shape(Shapes.S_CIRCLE, props, color);
-const rect = (props,color=red)=>shape(Shapes.S_RECT, props, color);
-const line = (props,color=red)=>shape(Shapes.S_LINE, props, color);
+const red = [1,0,0,.4];
+const circle = (props,color=red)=>debugShapes.push(Shapes.circle(props, color));
+const rect = (props,color=red)=>debugShapes.push(Shapes.rect(props, color));
+const line = (props,color=red)=>debugShapes.push(Shapes.line(props, color));
 
 function doCalc(data){
 
