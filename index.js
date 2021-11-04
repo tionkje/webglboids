@@ -12,6 +12,24 @@ if(!gl) throw new Error("No GL For you!");
 window.gl = gl
 
 
+class Camera{
+  viewProj = mat4.create();
+  invViewProj = mat4.create();
+  constructor(){
+  }
+
+  update(){
+    if(viewChanged){
+      mat4.invert(viewMat, camMat);
+      mat4.multiply(this.viewProj, projMat, viewMat);
+      viewChanged=0;
+    }
+    mat4.invert(this.invViewProj, this.viewProj);
+  }
+}
+
+const camera = new Camera();
+
 const projMat = mat4.create();
 const zNear = 100;
 const zFar = 1000;
@@ -36,7 +54,6 @@ function resize(){
 
   viewChanged=1;
 }
-const viewProj = mat4.create();
 const viewMat = mat4.create();
 let viewChanged = 1;
 const camMat = mat4.create();
@@ -214,19 +231,13 @@ gui.add(DBG,'z',-100,100,0.01);
 let workerPromise;
 async function renderScene(numBoids){
 
-  if(viewChanged){
-    mat4.invert(viewMat, camMat);
-    mat4.multiply(viewProj, projMat, viewMat);
-    viewChanged=0;
-  }
+  camera.update();
 
-  const invViewProj = mat4.create();
-  mat4.invert(invViewProj, viewProj);
 
   const plane = vec4.fromValues(0,0,1,0);
   // const plane = vec4.fromValues(0,0,1,-DBG.z);
   // const plane = mkplane(vec3.fromValues(0,0,1), vec3.fromValues(0,0,DBG.z));
-  const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), invViewProj);
+  const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), camera.invViewProj);
   var s = 30;
   mousePosShape.setRect(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
 
@@ -265,11 +276,11 @@ async function renderScene(numBoids){
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  boidCloud.uniforms.u_viewProj = viewProj;
+  boidCloud.uniforms.u_viewProj = camera.viewProj;
   boidCloud.render();
 
   shapes.concat(debugShapes).forEach(shape=>{
-    shape.setViewProj(viewProj);
+    shape.setViewProj(camera.viewProj);
     shape.render();
   });
 }
