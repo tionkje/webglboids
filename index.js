@@ -1,6 +1,5 @@
 import * as Shapes from "./src/shapes.js";
 import { InstancedRenderer } from "./src/instanced.js"
-import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
 import { screenToPlane } from "./src/ray.js"
 import undent from './src/undent.js';
@@ -276,6 +275,7 @@ async function renderScene(numBoids){
 }
 
  /*
+import { findMaxNr } from "./src/performance.js"
 const props = { minNr:70000, maxNr:100000, samples:10, init, loop:renderScene, finish }
 const measures = [];
 function finish(nr){
