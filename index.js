@@ -1,10 +1,10 @@
-import { createProgram, getProgramSetters } from "./src/glUtil.js";
 import * as Shapes from "./src/shapes.js";
 import { InstancedRenderer } from "./src/instanced.js"
 import { findMaxNr } from "./src/performance.js"
 import { MouseDrag, onBoxSelection } from "./src/input.js"
 import { screenToPlane } from "./src/ray.js"
 import undent from './src/undent.js';
+import { createPropFilter } from './src/util.js';
 const { mat3, mat4, vec2, vec3, vec4 } = glMatrix;
 
 const canvas = document.querySelector('canvas');
@@ -146,9 +146,6 @@ function init(numBoids){
   sendToWorker();
 }
 
-
-// create a new object with only props in list
-const createPropFilter = list => o =>Object.fromEntries(Object.entries(o).filter(x=>list.includes(x[0])))
 
 function sendToWorker(){
   // call load to make sure the buffers are filled in
