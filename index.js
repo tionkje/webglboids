@@ -13,31 +13,31 @@ window.gl = gl
 
 
 class Camera{
-  viewProj = mat4.create();
-  invViewProj = mat4.create();
-  viewMat = mat4.create();
-  viewChanged = 1;
-  camMat = mat4.create();
-  projMat = mat4.create();
   zNear = 100;
   zFar = 1000;
+  perspective = false;
 
-  constructor(){
-  }
+  camMat = mat4.create();
+  viewMat = mat4.create();
+  projMat = mat4.create();
+  viewProj = mat4.create();
+  invViewProj = mat4.create();
+
+  viewChanged = 1;
 
   update(){
-    if(this.viewChanged){
-      mat4.invert(this.viewMat, this.camMat);
-      mat4.multiply(this.viewProj, this.projMat, this.viewMat);
-      this.viewChanged=0;
-    }
+    if(!this.viewChanged) return
+    this.viewChanged=0;
+
+    mat4.invert(this.viewMat, this.camMat);
+    mat4.multiply(this.viewProj, this.projMat, this.viewMat);
     mat4.invert(this.invViewProj, this.viewProj);
   }
+
   resize(width, height){
     mat4.identity(this.camMat);
     const aspect = width/height
-    const PERSPECTIVE = false;
-    if(PERSPECTIVE){
+    if(this.perspective){
       // create perspective camera where z-nul plane has coords that align to screen coords
       mat4.perspective(this.projMat, Math.PI/2, aspect, this.zNear, this.zFar);
       mat4.scale(this.projMat, this.projMat, vec3.fromValues(1,-1,1));
