@@ -15,48 +15,54 @@ window.gl = gl
 class Camera{
   viewProj = mat4.create();
   invViewProj = mat4.create();
+  viewMat = mat4.create();
+  viewChanged = 1;
+  camMat = mat4.create();
+  projMat = mat4.create();
+  zNear = 100;
+  zFar = 1000;
+
   constructor(){
   }
 
   update(){
-    if(viewChanged){
-      mat4.invert(viewMat, camMat);
-      mat4.multiply(this.viewProj, projMat, viewMat);
-      viewChanged=0;
+    if(this.viewChanged){
+      mat4.invert(this.viewMat, this.camMat);
+      mat4.multiply(this.viewProj, this.projMat, this.viewMat);
+      this.viewChanged=0;
     }
     mat4.invert(this.invViewProj, this.viewProj);
+  }
+  resize(width, height){
+    mat4.identity(this.camMat);
+    const aspect = width/height
+    const PERSPECTIVE = false;
+    if(PERSPECTIVE){
+      // create perspective camera where z-nul plane has coords that align to screen coords
+      mat4.perspective(this.projMat, Math.PI/2, aspect, this.zNear, this.zFar);
+      mat4.scale(this.projMat, this.projMat, vec3.fromValues(1,-1,1));
+      mat4.translate(this.camMat, this.camMat, vec3.fromValues(width/2,height/2,height/2));
+    }else{
+      mat4.ortho(this.projMat, 0, width, height,0, this.zNear, this.zFar)
+      mat4.translate(this.camMat, this.camMat, vec3.fromValues(0,0,height/2));
+    }
+
+    this.viewChanged=1;
   }
 }
 
 const camera = new Camera();
 
-const projMat = mat4.create();
-const zNear = 100;
-const zFar = 1000;
 function resize(){
   if(canvas.width == canvas.clientHeight && 
     canvas.height == canvas.clientHeight) return;
 
   canvas.width = canvas.clientWidth
   canvas.height = canvas.clientHeight
-  mat4.identity(camMat);
-  const aspect = canvas.width/canvas.height
-  const PERSPECTIVE = false;
-  if(PERSPECTIVE){
-    // create perspective camera where z-nul plane has coords that align to screen coords
-    mat4.perspective(projMat, Math.PI/2, aspect, zNear, zFar);
-    mat4.scale(projMat, projMat, vec3.fromValues(1,-1,1));
-    mat4.translate(camMat, camMat, vec3.fromValues(canvas.width/2,canvas.height/2,canvas.height/2));
-  }else{
-    mat4.ortho(projMat, 0, canvas.width, canvas.height,0, zNear, zFar)
-    mat4.translate(camMat, camMat, vec3.fromValues(0,0,canvas.height/2));
-  }
 
-  viewChanged=1;
+  camera.resize(canvas.width, canvas.height);
+
 }
-const viewMat = mat4.create();
-let viewChanged = 1;
-const camMat = mat4.create();
 resize();
 window.addEventListener('resize',resize);
 
@@ -205,8 +211,8 @@ onBoxSelection(rect=>{
 const mouseDrag = new MouseDrag(canvas);
 mouseDrag.on('move',e=>{
   if(e.button!=2) return;
-  mat4.translate(camMat, camMat, vec3.fromValues(-e.dx, -e.dy, 0));
-  viewChanged=1;
+  mat4.translate(camera.camMat, camera.camMat, vec3.fromValues(-e.dx, -e.dy, 0));
+  camera.viewChanged=1;
 });
 
 let mousePos = new Float32Array(3);
@@ -233,10 +239,7 @@ async function renderScene(numBoids){
 
   camera.update();
 
-
   const plane = vec4.fromValues(0,0,1,0);
-  // const plane = vec4.fromValues(0,0,1,-DBG.z);
-  // const plane = mkplane(vec3.fromValues(0,0,1), vec3.fromValues(0,0,DBG.z));
   const sceneMousePos = screenToPlane(mousePos, plane, vec2.fromValues(gl.canvas.width,gl.canvas.height), camera.invViewProj);
   var s = 30;
   mousePosShape.setRect(sceneMousePos[0]-s/2,sceneMousePos[1]-s/2,s,s);
