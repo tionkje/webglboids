@@ -52,13 +52,11 @@ for(var i=0;i<50;i++)
 const debugShapes = [];
 
 
-function createBoidInst(idx, total){
-  const factor = (idx+1)/(total+1);
+function createBoidInst(){
   return {
     a_color:new Float32Array([Math.random(), Math.random(), Math.random(), 1]),
     a_dir:new Float32Array([1,0,0]),
     a_pos:new Float32Array([Math.random()*gl.canvas.width,Math.random()*gl.canvas.height,0]),
-    // a_scale: new Float32Array([factor*200]),
     a_scale: new Float32Array([10]),
   }
 }
@@ -69,7 +67,7 @@ function init(numBoids){
   boidCloud = new InstancedRenderer(gl);
   window.boidCloud = boidCloud;
   boidCloud.loaded = 0;
-  boidCloud.instances = Array(numBoids).fill().map((_,i)=>createBoidInst(i,numBoids))
+  boidCloud.instances = Array(numBoids).fill().map(createBoidInst)
 
 
   boidCloud.uniformDefs = {
@@ -155,7 +153,7 @@ function sendToWorker(){
 canvas.addEventListener('click',e=>{
   boidCloud.loaded = 0;
   const oldLen = boidCloud.instances.length;
-  for(let i=0;i<oldLen;i++) boidCloud.instances[i+oldLen] = createBoidInst(i+oldLen, oldLen*2);
+  for(let i=0;i<oldLen;i++) boidCloud.instances[i+oldLen] = createBoidInst();
   sendToWorker();
   console.log(boidCloud.instances.length);
 });
