@@ -1,5 +1,3 @@
-import undent from './undent.js';
-
 export function createProgram(gl, vertexShaderSource, fragmentShaderSource) {
   function createShader(gl, type, source) {
     var shader = gl.createShader(type);
