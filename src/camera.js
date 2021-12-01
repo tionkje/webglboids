@@ -1,4 +1,3 @@
-import "../node_modules/gl-matrix/gl-matrix.js";
 const { mat3, mat4, vec2, vec3, vec4 } = glMatrix;
 
 export class Camera{

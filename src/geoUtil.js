@@ -1,5 +1,4 @@
-
-import "../node_modules/gl-matrix/gl-matrix.js";
+import 'https://unpkg.com/gl-matrix@3.3.0/gl-matrix-min.js';
 const { vec3, vec2 } = glMatrix;
 const { max, min } = Math;
 

@@ -1,6 +1,5 @@
 import * as Shapes from "./src/shapes.js"
 
-import "./node_modules/gl-matrix/gl-matrix.js";
 let { mat3, mat4, vec2, vec3, vec4 } = glMatrix;
 
 import { distanceLineSegmentToPoint } from './src/geoUtil.js';

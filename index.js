@@ -5,7 +5,6 @@ import { screenToPlane } from "./src/ray.js"
 import undent from './src/undent.js';
 import { createPropFilter } from './src/util.js';
 import { Camera } from './src/camera.js';
-import "./node_modules/gl-matrix/gl-matrix.js";
 const { mat3, mat4, vec2, vec3, vec4 } = glMatrix;
 
 const canvas = document.querySelector('canvas');
@@ -186,11 +185,6 @@ function onMouseMove(e){
 
 }
 canvas.addEventListener('mousemove', onMouseMove);
-
-var DBG = {z:50};
-var gui = new dat.GUI();
-gui.add(DBG,'z',-100,100,0.01);
-
 
 
 // Draw
